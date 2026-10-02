@@ -2,7 +2,8 @@
 
 /* ═══════════════════════════════════════════════════════════════════════════
    DevTrackAcademy — Learn sub-brand
-   Neo-Brutalist design system (design.md). Sub-brand accent: Sky Cobalt.
+   Neo-Brutalist design system (design.md). Brand accent: Primary Orange,
+   matching interview.devtrackacademy.com.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @theme {
@@ -21,7 +22,9 @@
   --color-coral: #FF5C7A;
 
   /* Semantic */
-  --color-brand: #4EA8FF;       /* --platform-learn */
+  --color-brand: #FF6B35;       /* --brand (Primary Orange) */
+  --color-brand-hover: #E85A27;
+  --color-on-brand: #FFFFFF;    /* text/icons on solid brand fills */
   --color-positive: #6EE7B7;
   --color-data: #FFC93C;
   --color-negative: #FF5C7A;
@@ -47,7 +50,7 @@
   --paper: #FFF8F0;
   --paper-sunk: #F5EBE0;
   --paper-pure: #FFFFFF;
-  --brand: #4EA8FF;
+  --brand: #FF6B35;
 
   --t-hero: clamp(3rem, 8.5vw, 7.5rem);
   --t-display: clamp(2.25rem, 5.5vw, 4.5rem);
@@ -176,8 +179,9 @@ h1, h2, h3, h4 {
     padding: 1rem 1.75rem;
     font-size: 1rem;
   }
-  /* Ink text on Sky for contrast (6.7:1); matches the design's Chip blueprint */
-  .btn-primary { background: var(--color-brand); color: var(--color-ink); }
+  /* White on orange, as on interview.devtrackacademy.com */
+  .btn-primary { background: var(--color-brand); color: var(--color-on-brand); }
+  .btn-primary:hover { background: var(--color-brand-hover); }
   .btn-secondary { background: var(--color-paper-pure); color: var(--color-ink); }
   .btn-danger { background: var(--color-coral); color: var(--color-paper-pure); }
   .btn-dark { background: var(--color-ink); color: var(--color-paper); }
@@ -224,7 +228,7 @@ h1, h2, h3, h4 {
     position: relative;
     display: inline-block;
     white-space: nowrap;
-    color: var(--color-ink);
+    color: var(--color-on-brand);
     padding: 0 0.2em;
     z-index: 1;
   }

@@ -45,7 +45,7 @@ export function TerminalLabCard({
     <div className="space-y-6">
       <div className="section-dark overflow-hidden rounded-3xl border-4 border-ink shadow-brut">
         <div className="flex flex-col gap-6 p-7 md:flex-row md:items-center">
-          <div className="grid size-16 shrink-0 place-items-center rounded-2xl border-4 border-paper bg-brand text-ink">
+          <div className="grid size-16 shrink-0 place-items-center rounded-2xl border-4 border-paper bg-brand text-on-brand">
             <SquareTerminal className="size-8" />
           </div>
           <div className="flex-1 space-y-2">

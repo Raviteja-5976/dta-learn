@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   description:
     "Interactive developer courses: read a short article, do it in a real Linux terminal or code editor in your browser, get checked automatically, and move on.",
-  icons: { icon: "/icon.svg" },
+  icons: { icon: "/images/logo.png", apple: "/images/logo.png" },
 };
 
 // Every page depends on the signed-in user or live course data.

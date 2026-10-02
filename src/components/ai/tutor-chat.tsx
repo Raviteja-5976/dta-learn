@@ -188,7 +188,7 @@ export function TutorChat({
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="fixed bottom-5 right-5 z-40 flex items-center gap-2 rounded-full border-4 border-ink bg-brand px-4 py-2.5 font-display font-bold shadow-brut transition-transform hover:-translate-y-0.5"
+          className="fixed bottom-5 right-5 z-40 flex items-center gap-2 rounded-full border-4 border-ink bg-brand px-4 py-2.5 font-display font-bold text-on-brand shadow-brut transition-transform hover:-translate-y-0.5 hover:bg-brand-hover"
           aria-label="Ask Glitch, the AI tutor"
         >
           <Bot className="size-5" /> Ask Glitch
@@ -303,7 +303,7 @@ function Bubble({ role, pending, children }: { role: "user" | "assistant"; pendi
   }
   return (
     <div className="mr-4 flex gap-2">
-      <span className="mt-1 grid size-7 shrink-0 place-items-center rounded-xl border-2 border-ink bg-brand">
+      <span className="mt-1 grid size-7 shrink-0 place-items-center rounded-xl border-2 border-ink bg-brand text-on-brand">
         <Bot className="size-4" />
       </span>
       <div className="min-w-0 flex-1 rounded-2xl rounded-tl-md border-[3px] border-ink bg-white px-3 py-2">

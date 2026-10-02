@@ -31,7 +31,7 @@ export function StudioNav({ isAdmin }: { isAdmin: boolean }) {
             aria-current={active ? "page" : undefined}
             className={cn(
               "flex items-center gap-2.5 whitespace-nowrap rounded-xl border-[3px] px-3 py-2 font-display text-sm font-bold",
-              active ? "border-ink bg-brand shadow-brut-xs" : "border-transparent hover:bg-paper-sunk",
+              active ? "border-ink bg-brand text-on-brand shadow-brut-xs" : "border-transparent hover:bg-paper-sunk",
             )}
           >
             <l.icon className="size-4" /> {l.label}

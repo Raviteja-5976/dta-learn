@@ -234,7 +234,7 @@ export function TerminalLabApp({ payload, engine, cheerpxVersion, backHref, next
                 onClick={() => updateSettings({ activeTab: t.id })}
                 className={cn(
                   "flex flex-1 items-center justify-center gap-1.5 border-r-[3px] border-ink px-2 py-2 font-mono text-[11px] font-bold uppercase last:border-r-0",
-                  settings.activeTab === t.id ? "bg-brand" : "hover:bg-paper-sunk",
+                  settings.activeTab === t.id ? "bg-brand text-on-brand" : "hover:bg-paper-sunk",
                 )}
               >
                 <t.icon className="size-3.5" /> {t.label}

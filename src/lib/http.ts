@@ -42,6 +42,24 @@ export function assertSameOrigin(request: Request): void {
   }
 }
 
+/**
+ * The public origin the browser actually used. Behind a CDN/load balancer the
+ * request URL is the internal host, so prefer the forwarded headers. Auth
+ * redirects must go back to this origin: the PKCE verifier and the session
+ * cookie are scoped to it. NEXT_PUBLIC_SITE_URL is inlined at build time and
+ * can be stale (e.g. localhost from .env.local), so it is only a last resort.
+ */
+export function requestOrigin(request: Request): string {
+  const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0].trim();
+  const host = forwardedHost || request.headers.get("host");
+  if (host) {
+    const forwardedProto = request.headers.get("x-forwarded-proto")?.split(",")[0].trim();
+    const proto = forwardedProto || new URL(request.url).protocol.replace(":", "");
+    return `${proto}://${host}`;
+  }
+  return process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
+}
+
 /** Wrap a route handler body: converts HttpError and unknown errors to JSON. */
 export async function handle(fn: () => Promise<Response>): Promise<Response> {
   try {

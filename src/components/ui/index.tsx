@@ -46,7 +46,7 @@ export function Card({ className, hover, ...props }: ComponentProps<"div"> & { h
 /* ── Chip ───────────────────────────────────────────────────────────────── */
 const CHIP_TONES = {
   default: "bg-white",
-  brand: "bg-brand",
+  brand: "bg-brand !text-on-brand",
   sky: "bg-sky",
   mint: "bg-mint",
   yellow: "bg-yellow",

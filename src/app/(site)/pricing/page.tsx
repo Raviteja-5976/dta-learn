@@ -90,7 +90,7 @@ export default async function PricingPage() {
       </div>
 
       <section className="card-brut flex flex-col gap-4 p-6 md:flex-row md:items-center">
-        <div className="grid size-14 shrink-0 place-items-center rounded-2xl border-4 border-ink bg-brand">
+        <div className="grid size-14 shrink-0 place-items-center rounded-2xl border-4 border-ink bg-brand text-on-brand">
           <Bot className="size-7" />
         </div>
         <div className="space-y-1">
@@ -110,7 +110,7 @@ function Features({ items, dark }: { items: string[]; dark?: boolean }) {
     <ul className="space-y-2.5">
       {items.map((t) => (
         <li key={t} className="flex gap-2.5">
-          <span className={`mt-0.5 grid size-5 shrink-0 place-items-center rounded-md border-2 ${dark ? "border-paper bg-brand text-ink" : "border-ink bg-mint"}`}>
+          <span className={`mt-0.5 grid size-5 shrink-0 place-items-center rounded-md border-2 ${dark ? "border-paper bg-brand text-on-brand" : "border-ink bg-mint"}`}>
             <Check className="size-3.5" />
           </span>
           <span className={dark ? "text-paper/90" : "text-ink/85"}>{t}</span>

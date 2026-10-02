@@ -7,13 +7,23 @@ import { safeNext } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Sign in" };
 
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
+function errorMessage(error?: string, description?: string): string | undefined {
+  if (!error) return undefined;
+  if (error === "oauth") return `Couldn't sign you in with that provider${description ? `: ${description}` : "."} Please try again.`;
+  return "Sign-in link was invalid or expired. Please try again.";
+}
+
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string; error?: string; error_description?: string }>;
+}) {
   const sp = await searchParams;
   const next = safeNext(sp.next);
   if (await getViewer()) redirect(next);
   return (
     <AuthShell title="Welcome back" subtitle="Sign in to pick up where you left off.">
-      <LoginForm next={next} initialError={sp.error ? "Sign-in link was invalid or expired. Please try again." : undefined} />
+      <LoginForm next={next} initialError={errorMessage(sp.error, sp.error_description)} />
     </AuthShell>
   );
 }

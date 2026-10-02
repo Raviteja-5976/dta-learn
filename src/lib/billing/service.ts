@@ -44,7 +44,7 @@ function checkoutBase(viewer: Viewer, description: string, notes: Record<string,
     currency: "INR",
     prefill: { name: displayName(viewer.profile), email: viewer.profile.email },
     notes,
-    theme: { color: "#4EA8FF" },
+    theme: { color: "#FF6B35" },
   };
 }
 

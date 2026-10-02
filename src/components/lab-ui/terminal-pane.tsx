@@ -12,7 +12,7 @@ export const TERMINAL_THEMES: Record<TerminalTheme, ITheme & { label: string }> 
     label: "Midnight",
     background: "#1B1F3B",
     foreground: "#FFF8F0",
-    cursor: "#4EA8FF",
+    cursor: "#FF6B35",
     cursorAccent: "#1B1F3B",
     selectionBackground: "#4EA8FF66",
     black: "#1B1F3B",

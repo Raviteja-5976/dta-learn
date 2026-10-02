@@ -116,7 +116,7 @@ export function AiTutorPanel({ settings, configured, model, usedToday }: { setti
           run(() => updateAiTutorSettings({ enabled, dailyLimit: limit }));
         }}
       >
-        <div className="grid size-12 place-items-center rounded-2xl border-4 border-ink bg-brand"><Bot className="size-6" /></div>
+        <div className="grid size-12 place-items-center rounded-2xl border-4 border-ink bg-brand text-on-brand"><Bot className="size-6" /></div>
         <label className="flex items-center gap-2 pb-2 font-semibold">
           <input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} className="size-4 accent-[#1B1F3B]" />
           Glitch is on
