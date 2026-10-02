@@ -1,0 +1,81 @@
+apiVersion: labs/v1
+kind: Lab
+metadata:
+  slug: sql-select-basics
+  title: SELECT, WHERE and GROUP BY
+  description: Query an employees table on SQLite. Your queries are checked against a hidden dataset too.
+  tags: [sql]
+  difficulty: beginner
+  estimatedMinutes: 15
+runtime:
+  type: compile
+  language: sqlite
+  limits: { cpuSeconds: 2, wallSeconds: 5, memoryMiB: 256 }
+  # Runs before your query on every Run (never shown to learners)
+  prelude: |
+    CREATE TABLE employees (id INTEGER PRIMARY KEY, name TEXT, department TEXT, salary INTEGER);
+    INSERT INTO employees VALUES
+      (1, 'Asha', 'Engineering', 120000),
+      (2, 'Ben', 'Sales', 70000),
+      (3, 'Chen', 'Engineering', 135000),
+      (4, 'Divya', 'Marketing', 80000),
+      (5, 'Eli', 'Sales', 65000),
+      (6, 'Farah', 'Engineering', 99000);
+files:
+  - path: query.sql
+    main: true
+    content: |
+      -- Table: employees(id, name, department, salary)
+      -- Write your query below. Press Run to see the result.
+      SELECT * FROM employees;
+ui:
+  layout: editor-output
+steps:
+  - id: engineers
+    title: High-earning engineers
+    instructions: |
+      Return the **name** and **salary** of employees in `Engineering` who earn
+      **more than 100000**, highest salary first.
+    checks:
+      - type: sql.result_equals
+        id: visible-data
+        compare: { trim: lines, ordered: true }
+        cases:
+          - { name: result, stdin: "", stdout: "Chen|135000\nAsha|120000\n" }
+      - type: sql.result_equals
+        id: hidden-data
+        compare: { trim: lines, ordered: true }
+        prelude: |
+          CREATE TABLE employees (id INTEGER PRIMARY KEY, name TEXT, department TEXT, salary INTEGER);
+          INSERT INTO employees VALUES
+            (1, 'Gita', 'Engineering', 101000),
+            (2, 'Hiro', 'Engineering', 100000),
+            (3, 'Ines', 'Sales', 300000),
+            (4, 'Jon', 'Engineering', 250000);
+        cases:
+          - { name: other-dataset, stdin: "", stdout: "Jon|250000\nGita|101000\n", hidden: true }
+    hints:
+      - "Filter with `WHERE department = 'Engineering' AND salary > 100000`."
+      - "Sort with `ORDER BY salary DESC`."
+    solution:
+      query.sql: |
+        SELECT name, salary FROM employees
+        WHERE department = 'Engineering' AND salary > 100000
+        ORDER BY salary DESC;
+
+  - id: headcount
+    title: Headcount per department
+    instructions: |
+      Replace your query: return each **department** and its number of
+      employees, ordered by department name (A→Z).
+    checks:
+      - type: sql.result_equals
+        id: visible-data
+        compare: { trim: lines, ordered: true }
+        cases:
+          - { name: result, stdin: "", stdout: "Engineering|3\nMarketing|1\nSales|2\n" }
+    hints:
+      - "`GROUP BY department` with `COUNT(*)`."
+solution:
+  query.sql: |
+    SELECT department, COUNT(*) FROM employees GROUP BY department ORDER BY department;

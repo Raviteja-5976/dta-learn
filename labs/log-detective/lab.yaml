@@ -1,0 +1,70 @@
+apiVersion: labs/v1
+kind: Lab
+metadata:
+  slug: log-detective
+  title: Log detective
+  description: |
+    Two server logs were generated just for you — nobody else has the same
+    data. Use `grep`, `awk`, `sort` and `uniq` to answer the questions, then
+    submit your answers. The server checks them against your personal dataset,
+    so this lab counts as **server-verified**.
+  tags: [linux, bash, text-processing]
+  difficulty: intermediate
+  estimatedMinutes: 20
+runtime:
+  type: terminal
+  image: webvm-debian
+  limits: { idleTimeoutMinutes: 30 }
+init:
+  - run: mkdir -p ~/logs
+ui:
+  cwd: /home/user/logs
+  cheatsheet:
+    - title: Peek
+      items:
+        - { cmd: head -5 auth.log, desc: "First lines of a file" }
+        - { cmd: wc -l *.log, desc: "Count lines" }
+        - { cmd: less access.log, desc: "Scroll (q to quit)" }
+    - title: Filter & count
+      items:
+        - { cmd: "grep 'Failed password' auth.log", desc: "Matching lines" }
+        - { cmd: "grep -c 'pattern' auth.log", desc: "Count matching lines" }
+        - { cmd: "awk '{print $1}' access.log", desc: "First column" }
+        - { cmd: "sort | uniq -c | sort -rn | head", desc: "Most frequent values" }
+steps:
+  - id: explore
+    title: Find the logs
+    instructions: |
+      Your logs are in `~/logs`. Look at the first lines of each file and count
+      how many lines they have.
+    cmds:
+      - cd ~/logs
+      - ls -la
+      - head -5 auth.log
+      - head -5 access.log
+      - wc -l *.log
+
+  - id: failed-logins
+    title: Count failed logins
+    instructions: |
+      Attackers love SSH. Read the question below, answer it with a pipeline in
+      the terminal, then type the number into the box.
+    checks:
+      - type: challenge.answer
+        generator: failed-logins
+        fail: "Not quite. Count only lines that say “Failed password for <user> ” for that exact user."
+    hints:
+      - "`grep 'Failed password for admin ' auth.log` lists one user's failures — swap in the user from the question."
+      - "Pipe into `wc -l` to count the lines, or use `grep -c`."
+
+  - id: top-ip
+    title: Find the busiest client
+    instructions: |
+      Which IP address sent the most requests to the web server?
+    checks:
+      - type: challenge.answer
+        generator: top-ip
+        fail: "That IP isn't the busiest one. Count requests per IP and sort."
+    hints:
+      - "The IP is the first column: `awk '{print $1}' access.log`."
+      - "`awk '{print $1}' access.log | sort | uniq -c | sort -rn | head -1`"

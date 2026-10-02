@@ -1,0 +1,136 @@
+apiVersion: labs/v1
+kind: Lab
+metadata:
+  slug: git-branches-101
+  title: Git branches 101
+  description: |
+    Work like a team does: branch off `main`, commit on the branch, merge it
+    back and push. A local bare repository at `~/remote.git` stands in for
+    GitHub — the sandbox has no internet.
+  tags: [git]
+  difficulty: beginner
+  estimatedMinutes: 20
+runtime:
+  type: terminal
+  image: webvm-debian
+  limits: { idleTimeoutMinutes: 30 }
+init:
+  # Commands are compatible with older git (no `git switch`, no `git init -b`).
+  - run: |
+      [ -f ~/.gitconfig ] || printf '[user]\n\tname = Learner\n\temail = learner@sandbox.local\n' > ~/.gitconfig
+      rm -rf ~/project ~/remote.git
+      git init -q --bare ~/remote.git
+      mkdir -p ~/project && cd ~/project
+      git init -q
+      git checkout -q -b main
+      printf '# Shop\n\nA tiny web shop.\n' > README.md
+      git add README.md && git commit -q -m "Initial commit"
+      printf 'print("hello shop")\n' > app.py
+      git add app.py && git commit -q -m "Add app entry point"
+      git remote add origin ~/remote.git
+      git push -q origin main
+ui:
+  cwd: /home/user/project
+  cheatsheet:
+    - title: Inspect
+      items:
+        - { cmd: git status, desc: "What changed?" }
+        - { cmd: git log --oneline --graph --all, desc: "History of every branch" }
+        - { cmd: git branch -a, desc: "List branches" }
+    - title: Branch & commit
+      items:
+        - { cmd: git checkout -b feature/login, desc: "Create and switch to a branch" }
+        - { cmd: git checkout main, desc: "Switch back to main" }
+        - { cmd: git add -A, desc: "Stage everything" }
+        - { cmd: "git commit -m \"message\"", desc: "Commit staged changes" }
+    - title: Share
+      items:
+        - { cmd: git merge feature/login, desc: "Merge a branch into the current one" }
+        - { cmd: git push origin main, desc: "Upload main to origin" }
+steps:
+  - id: look
+    title: Read the history
+    instructions: |
+      A repository is ready in `~/project` with two commits on `main`. Move
+      into it and look at the history and status.
+    cmds:
+      - cd ~/project
+      - git log --oneline
+      - git status
+
+  - id: branch
+    title: Create a branch called feature/login
+    instructions: |
+      Create a new branch named **feature/login** and switch to it.
+    cmds:
+      - git checkout -b feature/login
+    checks:
+      - type: git.branch_exists
+        repo: ~/project
+        branch: feature/login
+        fail: "No branch named feature/login yet. Run `git branch` to list branches."
+      - type: git.current_branch
+        repo: ~/project
+        branch: feature/login
+        fail: "You're not on feature/login. Use `git checkout feature/login`."
+    hints:
+      - "Branches are created with `git branch <name>` or `git checkout -b <name>`."
+      - "Try: `git checkout -b feature/login`"
+    solution: cd ~/project && git checkout -q -b feature/login
+
+  - id: commit
+    title: Commit a login page on the branch
+    instructions: |
+      Create `login.html` with any content, then **stage and commit** it on
+      `feature/login`. Use a commit message that mentions *login*. Leave the
+      working tree clean.
+    checks:
+      - type: git.commit_count
+        repo: ~/project
+        ref: feature/login
+        base: main
+        min: 1
+        fail: "feature/login has no new commits compared with main."
+      - type: git.commit_message_matches
+        repo: ~/project
+        ref: feature/login
+        pattern: "[Ll]ogin"
+        fail: "The latest commit message on feature/login should mention login."
+      - type: git.clean_worktree
+        repo: ~/project
+        fail: "You have uncommitted changes. Check `git status`."
+    hints:
+      - "`echo '<form>…</form>' > login.html` creates the file."
+      - "`git add login.html && git commit -m \"Add login page\"`"
+    solution: cd ~/project && echo '<form>login</form>' > login.html && git add login.html && git commit -q -m "Add login page"
+
+  - id: merge
+    title: Merge it into main
+    instructions: |
+      Switch back to `main` and merge `feature/login` into it.
+    checks:
+      - type: git.merged
+        repo: ~/project
+        branch: feature/login
+        into: main
+        fail: "main doesn't contain the feature/login commits yet."
+      - type: git.current_branch
+        repo: ~/project
+        branch: main
+        fail: "Switch back to main with `git checkout main`."
+    hints:
+      - "`git checkout main` then `git merge feature/login`."
+    solution: cd ~/project && git checkout -q main && git merge -q feature/login
+
+  - id: push
+    title: Push main to origin
+    instructions: |
+      Publish your work: push `main` to the `origin` remote.
+    checks:
+      - type: command.exit_code
+        title: origin/main matches your main
+        run: '[ "$(git -C ~/project rev-parse main)" = "$(git -C ~/remote.git rev-parse main)" ]'
+        fail: "origin's main doesn't match yours yet. Run `git push origin main`."
+    hints:
+      - "`git push origin main`"
+    solution: cd ~/project && git push -q origin main

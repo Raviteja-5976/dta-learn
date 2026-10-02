@@ -1,0 +1,104 @@
+apiVersion: labs/v1
+kind: Lab
+metadata:
+  slug: linux-basics
+  title: "Linux basics: files and folders"
+  description: |
+    Move around a real Linux file system, create folders and files, filter a log
+    with `grep`, and make your first executable script.
+  tags: [linux, bash]
+  difficulty: beginner
+  estimatedMinutes: 15
+runtime:
+  type: terminal
+  image: webvm-debian
+  limits: { idleTimeoutMinutes: 30 }
+init:
+  - run: |
+      mkdir -p ~/playground/notes
+      printf 'buy milk\nwrite report\ncall mom\n' > ~/playground/notes/todo.txt
+      printf 'error: disk full\ninfo: started\nerror: timeout\ninfo: stopped\n' > ~/playground/app.log
+ui:
+  cwd: /home/user/playground
+steps:
+  - id: explore
+    title: Look around
+    instructions: |
+      Your sandbox has a folder called `~/playground`. Move into it, print where
+      you are with `pwd`, then list everything with `ls -la`.
+
+      This step has no check — press **Run** next to each command and watch the
+      terminal.
+    cmds:
+      - cd ~/playground
+      - pwd
+      - ls -la
+      - cat notes/todo.txt
+
+  - id: make-dir
+    title: Create a projects folder
+    instructions: |
+      Create a folder named **projects** inside `~/playground`.
+    checks:
+      - type: dir.exists
+        path: ~/playground/projects
+        fail: "There is no ~/playground/projects folder yet. Use mkdir."
+    hints:
+      - "`mkdir <name>` makes a directory."
+      - "From inside ~/playground: `mkdir projects`"
+    solution: mkdir -p ~/playground/projects
+
+  - id: write-file
+    title: Write a README
+    instructions: |
+      Inside `projects`, create **README.md** containing the line `# My projects`.
+    checks:
+      - type: file.contains
+        path: ~/playground/projects/README.md
+        pattern: "^# My projects$"
+        fail: "README.md must contain the line: # My projects"
+    hints:
+      - "`echo 'text' > file` writes text into a file, replacing what was there."
+      - "Try: `echo '# My projects' > ~/playground/projects/README.md`"
+    solution: echo '# My projects' > ~/playground/projects/README.md
+
+  - id: grep-errors
+    title: Keep only the errors
+    instructions: |
+      `app.log` mixes info and error lines. Save **only the error lines** into
+      `~/playground/errors.txt`.
+    checks:
+      - type: file.equals
+        path: ~/playground/errors.txt
+        content: |
+          error: disk full
+          error: timeout
+        fail: "errors.txt should contain exactly the two error lines from app.log."
+    hints:
+      - "`grep <pattern> <file>` prints the matching lines."
+      - "Redirect the output with `>`: `grep error app.log > errors.txt`"
+    solution: grep '^error' ~/playground/app.log > ~/playground/errors.txt
+
+  - id: script
+    title: Make a script executable
+    instructions: |
+      Create `~/playground/hello.sh` that prints `hello`, and make it
+      **executable** so `./hello.sh` runs it.
+
+      Tip: open the **Files** tab to create and edit the file without leaving the browser.
+    checks:
+      - type: file.mode
+        path: ~/playground/hello.sh
+        mode: "+x"
+        fail: "hello.sh is not executable yet. Use chmod +x."
+      - type: command.output_matches
+        title: Running it prints hello
+        run: "~/playground/hello.sh"
+        pattern: "^hello$"
+        fail: "Running hello.sh should print hello."
+    hints:
+      - "Start the file with `#!/bin/bash` and add the line `echo hello`."
+      - "`chmod +x hello.sh` makes it executable."
+    solution: |
+      printf '#!/bin/bash\necho hello\n' > ~/playground/hello.sh
+      chmod +x ~/playground/hello.sh
