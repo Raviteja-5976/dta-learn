@@ -19,6 +19,9 @@ function s3(): S3Client {
       region: cfg.region,
       // Without explicit keys the default chain is used (e.g. Amplify's SSR compute role).
       credentials: cfg.accessKeyId && cfg.secretAccessKey ? { accessKeyId: cfg.accessKeyId, secretAccessKey: cfg.secretAccessKey } : undefined,
+      // The SDK's default flexible checksums would bake the CRC32 of an empty
+      // body into presigned PUT URLs, so S3 rejects the browser's real upload.
+      requestChecksumCalculation: "WHEN_REQUIRED",
     });
   }
   return client;

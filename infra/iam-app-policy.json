@@ -5,7 +5,7 @@
       "Sid": "AppUploadsAndSignedDownloads",
       "Effect": "Allow",
       "Action": ["s3:PutObject", "s3:GetObject"],
-      "Resource": ["arn:aws:s3:::YOUR_BUCKET_NAME/public/*", "arn:aws:s3:::YOUR_BUCKET_NAME/private/*"]
+      "Resource": ["arn:aws:s3:::devtrack-learn-content/public/*", "arn:aws:s3:::devtrack-learn-content/private/*"]
     }
   ]
 }

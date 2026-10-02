@@ -19,9 +19,24 @@ export async function uploadToS3(file: File, visibility: "public" | "private"): 
   const presign = await api<{ key: string; uploadUrl: string; url: string | null }>("/api/uploads/presign", {
     body: { fileName: file.name, contentType, size: file.size, visibility },
   });
-  const res = await fetch(presign.uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": contentType } });
-  if (!res.ok) throw new Error(`Upload failed (${res.status}). Check the bucket's CORS settings.`);
+  let res: Response;
+  try {
+    res = await fetch(presign.uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": contentType } });
+  } catch {
+    // A CORS rejection surfaces as a network error with no status.
+    throw new Error("Upload blocked before reaching storage. Check the bucket's CORS settings for this site's origin.");
+  }
+  if (!res.ok) throw new Error(`Upload failed (${res.status}): ${await s3ErrorReason(res)}`);
   return { key: presign.key, url: presign.url, name: file.name, size: file.size, contentType };
+}
+
+/** S3 answers with an XML <Error> body; surface its code and message. */
+async function s3ErrorReason(res: Response): Promise<string> {
+  const xml = await res.text().catch(() => "");
+  const code = /<Code>([^<]*)<\/Code>/.exec(xml)?.[1];
+  const message = /<Message>([^<]*)<\/Message>/.exec(xml)?.[1];
+  if (code === "AccessDenied") return "the storage credentials aren't allowed to write to the bucket (check the IAM policy).";
+  return [code, message].filter(Boolean).join(" — ") || "storage rejected the upload.";
 }
 
 export function UploadButton({
